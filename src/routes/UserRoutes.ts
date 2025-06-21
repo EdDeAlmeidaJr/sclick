@@ -6,6 +6,8 @@ import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import UserService from '@src/services/UserService';
 import User from '@src/models/User';
 
+import { createUserSchema } from '@src/models/User';
+
 import { isString } from 'jet-validators';
 import { IReq, IRes } from './common/types';
 import { parseReq } from './common/util';
@@ -16,7 +18,7 @@ import { parseReq } from './common/util';
 ******************************************************************************/
 
 const Validators = {
-  add: parseReq({ user: User.test }),
+  add: parseReq({ user: createUserSchema }),
   update: parseReq({ user: User.test }),
   delete: parseReq({ id: isString }),
 } as const;

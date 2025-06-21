@@ -12,6 +12,28 @@ import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import { RouteError } from '@src/common/util/route-errors';
 import { NodeEnvs } from '@src/common/constants';
 
+import 'dotenv/config';
+
+
+/******************************************************************************
+                                MongoDB Connection
+******************************************************************************/
+
+import mongoose from 'mongoose';
+
+const mongoUri = process.env.MONGO_URI;
+
+if (!mongoUri) {
+  throw new Error('MONGO_URI não definida no ambiente. Por favor, defina a variável de ambiente MONGO_URI.');
+}
+
+mongoose.connect(mongoUri)
+  .then(() => {
+    console.log('Conectado ao MongoDB!');
+  })
+  .catch((err) => {
+    console.error('Erro ao conectar ao MongoDB:', err);
+  });
 
 /******************************************************************************
                                 Setup
@@ -24,7 +46,7 @@ const app = express();
 
 // Basic middleware
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // Show routes called in console during development
 if (ENV.NodeEnv === NodeEnvs.Dev) {

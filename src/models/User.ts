@@ -4,7 +4,6 @@ import { parseObject, TParseOnError } from 'jet-validators/utils';
 import { isRelationalKey, transIsDate } from '@src/common/util/validators';
 import { IModel } from './common/types';
 
-
 /******************************************************************************
                                  Constants
 ******************************************************************************/
@@ -14,31 +13,40 @@ const DEFAULT_USER_VALS = (): IUser => ({
   name: '',
   created: new Date(),
   email: '',
+  password: '',
 });
-
 
 /******************************************************************************
                                   Types
 ******************************************************************************/
 
 export interface IUser extends IModel {
+  id?: number;
   name: string;
   email: string;
+  password?: string;
+  created?: Date;
 }
-
 
 /******************************************************************************
                                   Setup
 ******************************************************************************/
 
-// Initialize the "parseUser" function
+// Validador completo (para update, etc)
 const parseUser = parseObject<IUser>({
   id: isRelationalKey,
   name: isString,
   email: isString,
+  password: isString,
   created: transIsDate,
 });
 
+// Validador para criação/cadastro (apenas campos obrigatórios)
+export const createUserSchema = {
+  name: isString,
+  email: isString,
+  password: isString,
+};
 
 /******************************************************************************
                                  Functions
@@ -61,7 +69,6 @@ function test(arg: unknown, errCb?: TParseOnError): arg is IUser {
   return !!parseUser(arg, errCb);
 }
 
-
 /******************************************************************************
                                 Export default
 ******************************************************************************/
@@ -69,4 +76,4 @@ function test(arg: unknown, errCb?: TParseOnError): arg is IUser {
 export default {
   new: __new__,
   test,
-} as const;
+};

@@ -3,6 +3,7 @@ import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 
 import UserRepo from '@src/repos/UserRepo';
 import { IUserDoc } from '@src/models/User.mongo';
+import bcrypt from 'bcryptjs';
 
 /******************************************************************************
                                 Constants
@@ -15,17 +16,26 @@ export const USER_NOT_FOUND_ERR = 'User not found';
 ******************************************************************************/
 
 /**
- * Get all users.
+ * Get all users (sem senha).
  */
-function getAll(): Promise<IUserDoc[]> {
-  return UserRepo.getAll();
+async function getAll(): Promise<Omit<IUserDoc, 'password'>[]> {
+  const users = await UserRepo.getAll();
+  // Remove o campo password de cada usuário
+  return users.map(u => {
+    const userObj = u.toObject ? u.toObject() : u;
+    const { password, ...rest } = userObj;
+    return rest;
+  });
 }
 
 /**
- * Add one user.
+ * Add one user (criptografa a senha).
  */
-function addOne(user: Partial<IUserDoc>): Promise<void> {
-  return UserRepo.add(user);
+async function addOne(user: Partial<IUserDoc>): Promise<void> {
+  if (user.password) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
+  await UserRepo.add(user);
 }
 
 /**
