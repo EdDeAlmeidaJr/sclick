@@ -6,7 +6,7 @@ import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import UserService from '@src/services/UserService';
 import User from '@src/models/User';
 
-import { createUserSchema } from '@src/models/User';
+import { createUserSchema, updateUserSchema } from '@src/models/User';
 
 import { isString } from 'jet-validators';
 import { IReq, IRes } from './common/types';
@@ -19,7 +19,7 @@ import { parseReq } from './common/util';
 
 const Validators = {
   add: parseReq({ user: createUserSchema }),
-  update: parseReq({ user: User.test }),
+  update: parseReq({ user: updateUserSchema }),
   delete: parseReq({ id: isString }),
 } as const;
 
@@ -50,7 +50,7 @@ async function add(req: IReq, res: IRes) {
  */
 async function update(req: IReq, res: IRes) {
   const { user } = Validators.update(req.body);
-  const userDoc: IUserUpdate = { ...user, _id: String(user.id) };
+  const userDoc: IUserUpdate = { ...user, _id: String(user._id) };
   await UserService.updateOne(userDoc as any);
   res.status(HttpStatusCodes.OK).end();
 }

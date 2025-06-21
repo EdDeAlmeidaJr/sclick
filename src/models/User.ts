@@ -48,6 +48,12 @@ export const createUserSchema = {
   password: isString,
 };
 
+export const updateUserSchema = {
+  _id: isString,
+  name: isString,
+  email: isString,
+};
+
 /******************************************************************************
                                  Functions
 ******************************************************************************/
